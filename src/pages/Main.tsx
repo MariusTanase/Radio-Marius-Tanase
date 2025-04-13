@@ -4,7 +4,6 @@ import Footer from '../components/footer/Footer'
 import Player from '../components/player/Player'
 import RadioList from '../components/radiosList/RadioList'
 import Settings from '../components/settings/Settings'
-// @ts-ignore
 import { radios } from '../components/radiosList/radios'
 
 const Main = () => {

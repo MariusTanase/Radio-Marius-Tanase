@@ -1,6 +1,6 @@
-import { RadioObject } from '../../types/types';
+import { RadioItem } from '../../types/types';
 
-export const radios: RadioObject[] = [
+export const radios: RadioItem[] = [
   {
     id: 1,
     title: "Virgin FM",

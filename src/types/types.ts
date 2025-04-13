@@ -2,13 +2,8 @@ export type toggleType = {
   toggleUI: boolean
 }
 
-export interface RadioObject {
-  id?: number,
-  title: string,
-  artist: string,
-  url: string,
-  genre: string,
-  image: string,
+export interface RadioObject extends RadioItem {
+
 }
 
 export interface ToggleUIProps {

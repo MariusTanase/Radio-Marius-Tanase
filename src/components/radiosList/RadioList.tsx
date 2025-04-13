@@ -29,7 +29,7 @@ const RadioList: React.FC<ToggleUIProps> = ({ toggleUI }) => {
 
     setRadio(url);
     setRadioName(title);
-    setRadioGenre(genre);
+    setRadioGenre(genre!);
     setRadioImage(image, title);
     startRadio();
   };
