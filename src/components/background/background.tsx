@@ -1,107 +1,174 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useMemo, useState } from 'react';
 import './background.css';
-import Particles from 'react-tsparticles'
-import { loadFull } from "tsparticles";
-// @ts-ignore: 'generateImage' is declared but its value is never read.
-import { generateImage } from '../../utils/backgroundGeneration'
+import { initBackground } from '../../utils/backgroundGeneration';
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import {
+  type Container,
+  type ISourceOptions,
+  MoveDirection,
+  OutMode,
+} from "@tsparticles/engine";
+import { loadSlim } from "@tsparticles/slim";
 
 const Background = () => {
+  const [init, setInit] = useState(false);
+  const [isParticlesEnabled, setIsParticlesEnabled] = useState(() => {
+    // Initialize from localStorage or default to true
+    return localStorage.getItem('particlesEnabled') !== 'false';
+  });
 
-    const background = useRef(null);
+  // Initialize background once component mounts
+  useEffect(() => {
+    // Add a small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      initBackground();
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
-    useEffect(() => {
-        generateImage('mountains');
-    }, [])
+  // Initialize the particles engine only once
+  useEffect(() => {
+    initParticlesEngine(async (engine) => {
+      await loadSlim(engine);
+    }).then(() => {
+      setInit(true);
+    });
+  }, []);
 
-    const particlesInit = async (main: any) => {
-        // you can initialize the tsParticles instance (main) here, adding custom shapes or presets
-        // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
-        // starting from v2 you can add only the features you need reducing the bundle size
-        await loadFull(main);
+  // Listen for changes to the 'particlesEnabled' setting in localStorage
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'particlesEnabled') {
+        setIsParticlesEnabled(e.newValue !== 'false');
+      }
     };
 
-    return (
-        <div ref={background} className='background'>
-            <Particles
-                id="tsparticles"
-                init={particlesInit}
-                options={{
-                    "particles": {
-                        "number": {
-                            "value": 50,
-                            "density": {
-                                "enable": false,
-                                "value_area": 800
-                            }
-                        },
-                        "color": {
-                            "value": "#fff"
-                        },
-                        "shape": {
-                            "type": "star",
-                        },
-                        "opacity": {
-                            "value": 0.8,
-                            "random": false,
-                            "anim": {
-                                "enable": false,
-                                "speed": 1,
-                                "opacity_min": 0.1,
-                                "sync": false
-                            }
-                        },
-                        "size": {
-                            "value": 4,
-                            "random": false,
-                            "anim": {
-                                "enable": false,
-                                "speed": 40,
-                                "size_min": 0.1,
-                                "sync": false
-                            }
-                        },
-                        "rotate": {
-                            "value": 0,
-                            "random": true,
-                            "direction": "clockwise",
-                            "animation": {
-                                "enable": true,
-                                "speed": 5,
-                                "sync": false
-                            }
-                        },
-                        "line_linked": {
-                            "enable": false,
-                            "distance": 600,
-                            "color": "#ffffff",
-                            "opacity": 0.4,
-                            "width": 2
-                        },
-                        "move": {
-                            "enable": true,
-                            "speed": 2,
-                            "direction": "none",
-                            "random": false,
-                            "straight": false,
-                            "out_mode": "out",
-                            "attract": {
-                                "enable": false,
-                                "rotateX": 600,
-                                "rotateY": 1200
-                            }
-                        }
-                    },
-                    "retina_detect": true,
-                    "background": {
-                        "image": "",
-                        "position": "50% 50%",
-                        "repeat": "no-repeat",
-                        "size": "cover"
-                    }
-                }}
-            />
-        </div>
-    )
-}
+    // Direct localStorage check for changes from other components
+    const checkLocalStorage = () => {
+      const currentSetting = localStorage.getItem('particlesEnabled') !== 'false';
+      if (currentSetting !== isParticlesEnabled) {
+        setIsParticlesEnabled(currentSetting);
+      }
+    };
 
-export default Background
+    // Set up listeners and interval checks
+    window.addEventListener('storage', handleStorageChange);
+    const interval = setInterval(checkLocalStorage, 1000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, [isParticlesEnabled]);
+
+  // Handler for when particles container is loaded
+  const particlesLoaded = async (container?: Container): Promise<void> => {
+    if (container) {
+      console.log("Particles container loaded");
+    }
+  };
+
+  // Particles configuration
+  const options: ISourceOptions = useMemo(
+    () => ({
+      fullScreen: false, // Important! Don't use fullScreen mode
+      background: {
+        color: {
+          value: "transparent",
+        },
+      },
+      fpsLimit: 60,
+      interactivity: {
+        events: {
+          onClick: {
+            enable: true,
+            mode: "push",
+          },
+          onHover: {
+            enable: true,
+            mode: "repulse",
+          },
+        },
+        modes: {
+          push: {
+            quantity: 4,
+          },
+          repulse: {
+            distance: 200,
+            duration: 0.4,
+          },
+        },
+      },
+      particles: {
+        color: {
+          value: "#ffffff",
+        },
+        links: {
+          color: "#ffffff",
+          distance: 150,
+          enable: false,
+          opacity: 0.5,
+          width: 1,
+        },
+        move: {
+          direction: MoveDirection.none,
+          enable: true,
+          outModes: {
+            default: OutMode.out,
+          },
+          random: false,
+          speed: 2, // Slowed down for smoother effect
+          straight: false,
+        },
+        number: {
+          density: {
+            enable: true,
+            area: 800,
+          },
+          value: 80,
+        },
+        opacity: {
+          value: { min: 0.1, max: 0.5 }, // Randomized opacity
+          animation: {
+            enable: true,
+            speed: 1,
+            minimumValue: 0.1,
+          }
+        },
+        shape: {
+          type: "circle", // Changed to circle for better performance
+        },
+        size: {
+          value: { min: 1, max: 5 },
+          animation: {
+            enable: true,
+            speed: 2,
+            minimumValue: 0.1,
+          }
+        },
+      },
+      detectRetina: true,
+    }),
+    []
+  );
+
+  return (
+    <div className="background" id="background" data-background>
+      <div className="background-overlay"></div>
+      
+      {/* Only render the Particles component when enabled */}
+      {init && isParticlesEnabled && (
+        <div className="particles-container">
+          <Particles
+            id="tsparticles"
+            particlesLoaded={particlesLoaded}
+            options={options}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Background;

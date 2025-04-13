@@ -1,10 +1,12 @@
 .radios-container {
-  max-width: 1200px;
+  max-width: 1000px;
   max-height: fit-content;
   margin: 4rem auto;
+  margin-left: 220px; /* Space for category filter */
+  transition: margin 0.3s ease;
 }
 
-.radios-list {
+.radios-list{
   width: 100%;
   display: flex;
   justify-content: center;
@@ -28,15 +30,14 @@
   background-color: var(--background-menu);
   color: var(--text-color);
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
+  transition: all 0.3s ease-in-out;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.radio-element:hover,
-.radio-element:focus-visible {
+.radio-element:hover {
   background-color: var(--hover-background-menu);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 .radio-element:focus-visible {
@@ -58,9 +59,9 @@
   transition: all 0.2s ease-in-out;
 }
 
-.radio-element:hover .radio-image img,
-.radio-element:focus-visible .radio-image img {
+.radio-element:hover .radio-image img {
   border-color: var(--accent-color, #007bff);
+  transform: scale(1.05);
 }
 
 .radio-info {
@@ -83,14 +84,44 @@
   font-style: italic;
 }
 
+.no-radios-message {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-color);
+  font-size: 1.2rem;
+  background-color: var(--background-menu);
+  border-radius: 10px;
+  margin: 2rem auto;
+  max-width: 500px;
+}
+
 /* Utility class for hiding elements */
 .hidden {
   display: none;
 }
 
-@media screen and (max-width: 1200px) {
+/* Animation for radio elements */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.radio-element {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsive design */
+@media screen and (max-width: 1100px) {
   .radios-container {
-    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90%;
   }
 }
 
@@ -100,12 +131,12 @@
   }
 
   .radio-image img {
-    width: 75px;
-    height: 75px;
+    width: 60px;
+    height: 60px;
   }
   
   .radio-element {
-    width: 200px;
+    width: 180px;
   }
 }
 
@@ -113,7 +144,7 @@
   .radios-container {
     width: 90%;
     margin-bottom: 6rem;
-    margin-top: 2rem;
+    margin-top: 1rem;
   }
 
   .radio-image {
@@ -129,11 +160,6 @@
   .radio-element {
     width: 155px;
     font-size: 0.8rem;
-  }
-
-  .radio-info {
-    width: 100%;
-    padding: 0.25rem;
   }
 
   .radio-info h4 {

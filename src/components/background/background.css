@@ -1,14 +1,55 @@
-.background{
-    width: 100%;
-    height: 100vh;
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 0.5s ease-in-out;
+}
 
-    position: fixed;
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 0;
+}
 
-    top: 0;
-    left: 0;
-    z-index: -1;
-    background-image: url('../../assets/images/bgImage1.jpg');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
+.particles-container {
+  position: fixed !important;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+#tsparticles {
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.background.changing {
+  animation: fadeIn 1s ease-in-out;
+}
+
+.particles-container {
+  opacity: 0;
+  animation: fadeIn 0.5s ease-in-out forwards;
 }

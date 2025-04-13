@@ -151,11 +151,15 @@ const loadBackgroundPreference = (): { theme: string; url: string } | null => {
  * Sets a default background if no other is available
  */
 const setDefaultBackground = (): void => {
-  const backgroundElement = document.querySelector('.background') as HTMLElement;
+  // Try multiple selectors to find the background element
+  const backgroundElement =
+    document.querySelector('.background') ||
+    document.getElementById('background') ||
+    document.querySelector('[data-background]');
 
   if (backgroundElement) {
     // Use a gradient as fallback
-    backgroundElement.style.backgroundImage = 'linear-gradient(to right, #4b6cb7, #182848)';
+    (backgroundElement as HTMLElement).style.backgroundImage = 'linear-gradient(to right, #4b6cb7, #182848)';
   }
 };
 
@@ -175,7 +179,13 @@ const initBackground = (): void => {
 
 // Initialize background when module is loaded
 if (typeof window !== 'undefined') {
-  window.addEventListener('DOMContentLoaded', initBackground);
+  // Wait for the DOM to be ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBackground);
+  } else {
+    // DOM is already ready, initialize now
+    initBackground();
+  }
 }
 
 export { generateImage, initBackground };
