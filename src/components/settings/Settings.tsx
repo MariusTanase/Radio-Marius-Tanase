@@ -2,8 +2,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import './Settings.css';
 import { faGear } from '@fortawesome/free-solid-svg-icons';
-import { ThemeMenu, ThemeOption } from '@/components/ThemeMenu/ThemeMenu';
-import BackgroundMenu from '@/components/BackgroundMenu/BackgroundMenu';
+import { ThemeMenu, ThemeOption } from '../ThemeMenu/ThemeMenu';
+import BackgroundMenu from '../BackgroundMenu/BackgroundMenu';
 import CustomButton from '../reusableComponents/CustomButton';
 import { SettingsProps } from '../../types/types';
 

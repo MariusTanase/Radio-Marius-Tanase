@@ -5,7 +5,7 @@ import Player from '../components/player/Player'
 import RadioList from '../components/radiosList/RadioList'
 import Settings from '../components/settings/Settings'
 // @ts-ignore
-import { radios } from '../radios'
+import { radios } from '../components/radiosList/radios'
 
 const Main = () => {
   let [showUI, setShowUI] = useState(false);

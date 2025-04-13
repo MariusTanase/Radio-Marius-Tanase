@@ -5,6 +5,7 @@ export type toggleType = {
 export interface RadioObject {
   id?: number,
   title: string,
+  artist: string,
   url: string,
   genre: string,
   image: string,

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { radios } from '../../radios';
+import {radios} from './radios';
 import { setRadio, setRadioName, startRadio, setRadioGenre, setRadioImage } from '../../utils/radio';
 import './RadioList.css';
 import { RadioObject, ToggleUIProps, RadioItem } from '../../types/types';
