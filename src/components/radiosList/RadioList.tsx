@@ -1,57 +1,72 @@
-import React, { useEffect, useRef } from 'react'
-// @ts-ignore: 'radios' is declared but its value is never read.
-import { radios } from '@/radios'
-// @ts-ignore: 'setRadio, setRadioName, startRadio, setRadioGenre, setRadioImage' is declared but its value is never read.
-import { setRadio, setRadioName, startRadio, setRadioGenre, setRadioImage } from '@/utils/radio'
-import './RadioList.css'
-import { RadioObject, toggleType } from '../../types/types'
+import React, { useEffect, useRef } from 'react';
+import { radios } from '../../radios';
+import { setRadio, setRadioName, startRadio, setRadioGenre, setRadioImage } from '../../utils/radio';
+import './RadioList.css';
+import { RadioObject, ToggleUIProps, RadioItem } from '../../types/types';
 
-const RadioList = ({ toggleUI }: toggleType) => {
-
-  const changeRadio = (radio: RadioObject) => {
-    const { url, title, genre, image } = radio
-
-    setRadio(url)
-    setRadioName(title)
-    setRadioGenre(genre)
-    setRadioImage(image, title)
-    startRadio()
-  }
-
+/**
+ * Component that displays a list of radio stations that can be selected
+ */
+const RadioList: React.FC<ToggleUIProps> = ({ toggleUI }) => {
   const radioPlaylistContainer = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-      toggleUI
-          // @ts-ignore
-        ? radioPlaylistContainer.current.classList.add('hidden')
-         // @ts-ignore
-        : radioPlaylistContainer.current.classList.remove('hidden');
+    if (radioPlaylistContainer.current) {
+      if (toggleUI) {
+        radioPlaylistContainer.current.classList.add('hidden');
+      } else {
+        radioPlaylistContainer.current.classList.remove('hidden');
+      }
+    }
   }, [toggleUI]);
 
+  /**
+   * Change the current radio station
+   * @param radio The radio station to change to
+   */
+  const changeRadio = (radio: RadioObject): void => {
+    const { url, title, genre, image } = radio;
+
+    setRadio(url);
+    setRadioName(title);
+    setRadioGenre(genre);
+    setRadioImage(image, title);
+    startRadio();
+  };
 
   return (
-    <div ref={radioPlaylistContainer} className='radios-container'>
-      {/* create a widget container that will contain all the radios from {radios} */}
-      <ul className='radios-list'>
-        {/* map through the radios list and create a list item for each radio */}
+    <div ref={radioPlaylistContainer} className="radios-container" aria-label="Radio stations list">
+      <ul className="radios-list">
         {radios.map((radio: RadioObject) => {
-          // extract the id and title to generate the elements of the 'buttons'
-          const { id, title } = radio
+          const { id, title, genre } = radio;
           return (
-            <li key={id} className='radio-element' onClick={() => changeRadio(radio)}>
-              <div className='radio-image'>
-                <img src={radio.image} alt={title} />
+            <li 
+              key={id} 
+              className="radio-element" 
+              onClick={() => changeRadio(radio)}
+              tabIndex={0}
+              role="button"
+              aria-label={`Play ${title} - ${genre} radio`}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  changeRadio(radio);
+                }
+              }}
+            >
+              <div className="radio-image">
+                <img src={radio.image} alt="" aria-hidden="true" />
               </div>
-              <div className='radio-info'>
+              <div className="radio-info">
                 <h4>{title}</h4>
+                <p className="radio-genre">{genre}</p>
               </div>
             </li>
-          )
-        })
-        }
+          );
+        })}
       </ul>
     </div>
-  )
-}
+  );
+};
 
-export default RadioList
+export default RadioList;

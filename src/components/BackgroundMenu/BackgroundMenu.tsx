@@ -1,64 +1,70 @@
-import React from 'react'
-import './BackgroundMenu.css'
-// @ts-ignore 
-import { generateImage } from '@/utils/unsplashBackgroundGeneration'
+import React, { useState } from 'react';
+import './BackgroundMenu.css';
+import { generateImage } from '../../utils/backgroundGeneration';
 
-const BackgroundMenu = () => {
+// Define the available background themes
+const backgroundThemes = [
+  { id: 'mountain', name: 'Mountain', icon: '🏔️' },
+  { id: 'beach', name: 'Beach', icon: '🏝️' },
+  { id: 'sky', name: 'Sky', icon: '☁️' },
+  { id: 'forest', name: 'Forest', icon: '🌲' },
+  { id: 'cozy', name: 'Cozy', icon: '🛋️' },
+  { id: 'japan', name: 'Japan', icon: '🗾' },
+  { id: 'cat', name: 'Cat', icon: '🐱' },
+  { id: 'dog', name: 'Dog', icon: '🐶' },
+  { id: 'city', name: 'City', icon: '🏙️' },
+  { id: 'space', name: 'Space', icon: '🌌' }
+];
 
-    const handleBackgroundChange = (backgroundTheme: string) => {
-        generateImage(backgroundTheme);
-    };
-
-
-    return (
-        <div className='background-container'>
-            <h5 className='settings-category__title'>
-                Select Background
-            </h5>
-            <div className='background-container__items'>
-                <div className='background-item' onClick={() => handleBackgroundChange('mountain')}>
-                    <div className='background-item__name' >
-                        Mountain
-                    </div>
-                </div>
-                <div className='background-item' onClick={() => handleBackgroundChange('beach')}>
-                    <div className='background-item__name' >
-                        Beach
-                    </div>
-                </div>
-                <div className='background-item' onClick={() => handleBackgroundChange('sky')}>
-                    <div className='background-item__name' >
-                        Sky
-                    </div>
-                </div>
-                <div className='background-item' onClick={() => handleBackgroundChange('forest')}>
-                    <div className='background-item__name' >
-                        Forest
-                    </div>
-                </div>
-                <div className='background-item' onClick={() => handleBackgroundChange('cozy')}>
-                    <div className='background-item__name' >
-                        Cozy
-                    </div>
-                </div>
-                <div className='background-item' onClick={() => handleBackgroundChange('japan')}>
-                    <div className='background-item__name' >
-                        Japan
-                    </div>
-                </div>
-                <div className='background-item' onClick={() => handleBackgroundChange('cat')}>
-                    <div className='background-item__name' >
-                        Cat
-                    </div>
-                </div>
-                <div className='background-item' onClick={() => handleBackgroundChange('dog')}>
-                    <div className='background-item__name' >
-                        Dog
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
+interface BackgroundTheme {
+  id: string;
+  name: string;
+  icon: string;
 }
 
-export default BackgroundMenu
+const BackgroundMenu: React.FC = () => {
+  const [activeTheme, setActiveTheme] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const handleBackgroundChange = async (theme: BackgroundTheme): Promise<void> => {
+    setIsLoading(true);
+    setActiveTheme(theme.id);
+    
+    try {
+      await generateImage(theme.id);
+    } catch (error) {
+      console.error('Failed to generate background:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="background-container">
+      <h5 className="settings-category__title">Select Background</h5>
+      
+      {isLoading && (
+        <div className="background-loading">
+          <div className="background-loading__spinner"></div>
+          <span>Loading new background...</span>
+        </div>
+      )}
+      
+      <div className="background-container__items">
+        {backgroundThemes.map((theme) => (
+          <button
+            key={theme.id}
+            className={`background-item ${activeTheme === theme.id ? 'background-item--active' : ''}`}
+            onClick={() => handleBackgroundChange(theme)}
+            aria-label={`Set background to ${theme.name}`}
+          >
+            <span className="background-item__icon">{theme.icon}</span>
+            <span className="background-item__name">{theme.name}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default BackgroundMenu;

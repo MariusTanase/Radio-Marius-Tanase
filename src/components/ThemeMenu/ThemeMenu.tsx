@@ -1,40 +1,43 @@
-import React, { useEffect, useState } from 'react'
-import './ThemeMenu.css'
+import React, { useEffect, useState } from 'react';
+import './ThemeMenu.css';
 
-// @ts-ignore
-const ThemeMenu = ({ content }) => {
-    const [theme, setTheme] = useState(localStorage.getItem('theme') ?? 'blue');
-    // @ts-ignore
-    const handleThemeChange = (newTheme) => {
-        localStorage.setItem('theme', newTheme);
-        setTheme(newTheme);
-    };
-
-    useEffect(() => {
-        // change the window prefered theme to theme
-        document.body.setAttribute('data-theme', theme);
-    }, [theme]);
-
-    return (
-        <div className='theme-container'>
-            <h5 className='settings-category__title'>
-                <p>Select Theme</p>
-            </h5>
-            <div className='theme-container__items'>
-                {
-                    Object.keys(content).map((key) => {
-                        return (
-                            <div key={key} className='theme-item' onClick={() => handleThemeChange(key.toLowerCase())}>
-                                <span className='theme-item__name' >
-                                    {key}
-                                </span>
-                            </div>
-                        )
-                    })
-                }
-            </div>
-        </div>
-    )
+export interface ThemeOption {
+  name: string;
 }
 
-export { ThemeMenu }
+export interface ThemeMenuProps {
+  content: Record<string, ThemeOption>;
+}
+
+export const ThemeMenu: React.FC<ThemeMenuProps> = ({ content }) => {
+  const [theme, setTheme] = useState<string>(() => {
+    return localStorage.getItem('theme') ?? 'blue';
+  });
+
+  const handleThemeChange = (newTheme: string): void => {
+    localStorage.setItem('theme', newTheme);
+    setTheme(newTheme);
+  };
+
+  useEffect(() => {
+    document.body.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  return (
+    <div className="theme-container">
+      <h5 className="settings-category__title">Select Theme</h5>
+      <div className="theme-container__items">
+        {Object.entries(content).map(([key, themeOption]) => (
+          <button
+            key={key}
+            className={`theme-item ${theme === key.toLowerCase() ? 'theme-item--active' : ''}`}
+            onClick={() => handleThemeChange(key.toLowerCase())}
+            aria-label={`Set theme to ${key}`}
+          >
+            <span className="theme-item__name">{key}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};

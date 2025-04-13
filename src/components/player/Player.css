@@ -1,113 +1,198 @@
 .audio-player {
-    width: 350px;
-    border-radius: 1rem 1rem 2rem 2rem;
-    padding: 24px;
-    background-color: var(--background-menu);
-    box-shadow: 0 18px 28px var(--background-menu);
-    position: relative;
-
-    margin: auto;
-    margin-top: 2rem;
-    color: var(--text-color);  
+  width: 350px;
+  border-radius: 1rem 1rem 2rem 2rem;
+  padding: 24px;
+  background-color: var(--background-menu);
+  box-shadow: 0 18px 28px rgba(0, 0, 0, 0.15);
+  position: relative;
+  margin: auto;
+  margin-top: 2rem;
+  color: var(--text-color);
+  transition: all 0.3s ease-in-out;
 }
+
+.audio-player:hover {
+  box-shadow: 0 20px 32px rgba(0, 0, 0, 0.2);
+}
+
+.artwork {
+  border-radius: 120px;
+  display: block;
+  margin: auto;
+  height: 150px;
+  width: 150px;
+  margin-bottom: 1rem;
+  border: solid 1px var(--text-color);
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.audio-player:hover .artwork {
+  transform: scale(1.05);
+}
+
+.track-info {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+  font-size: 1.2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.genre {
+  font-weight: 300;
+  margin-top: 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #a0a0a0);
+  font-style: italic;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.5em auto;
+  width: 80%;
+  gap: 15px;
+}
+
+.controls-buttons {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin: 0.5em auto;
+  gap: 10px;
+}
+
+.control-button {
+  color: var(--text-color);
+  font-size: 1.5rem;
+  border: none;
+  background: transparent;
+  font-weight: 300;
+  margin-top: 0;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-button:hover {
+  color: var(--hover-button-color, #007bff);
+  transform: scale(1.1);
+}
+
+.control-button:focus-visible {
+  outline: 2px solid var(--accent-color, #007bff);
+  outline-offset: 2px;
+}
+
+.control-button.play {
+  font-size: 1.8rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  width: 50px;
+  height: 50px;
+}
+
+.control-button.play:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.volume-control {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.5em auto;
+  gap: 0.5rem;
+}
+
+.volume-slider-container {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 8px;
+}
+
+.volume-icon {
+  font-size: 1.2rem;
+}
+
+input[type=range].volume-slider {
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: var(--text-color);
+  opacity: 0.7;
+  border-radius: 2px;
+  transition: opacity 0.2s;
+}
+
+input[type=range].volume-slider:hover {
+  opacity: 1;
+}
+
+input[type=range].volume-slider:focus {
+  outline: none;
+}
+
+input[type=range].volume-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--hover-thumb-color, #007bff);
+  cursor: pointer;
+  border: 1px solid var(--text-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s;
+}
+
+input[type=range].volume-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.now-playing {
+  text-align: center;
+  font-size: 0.8rem;
+  margin-top: 1rem;
+  opacity: 0.8;
+}
+
+.current-radio {
+  font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 400px) {
+  .audio-player {
+    width: 90%;
+    padding: 16px;
+  }
   
   .artwork {
-    border-radius: 120px;
-    display: block;
-    margin: auto;
-    height: 150px;
-    width: 150px;
-    margin-bottom: 1rem;
-    border: solid 1px var(--text-color);
+    height: 120px;
+    width: 120px;
   }
   
-  .track-info {
-    text-align: center;
+  .controls {
+    width: 95%;
   }
-  
-  .title {
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-  
-  .artist {
+}
 
-    font-weight: 300;
-    margin-top: 0;
-  }
-
-  .controls{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    margin: .5em auto;
-    width: 60%;
-    gap: 10px;
-  }
-
-  .controls-buttons{
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    margin: .5em auto;
-    gap: 10px;
-  }
-
-  .control-button{
-    color: var(--white);
-    font-size: 2em;
-    border: none;
-    background: transparent;
-    font-weight: 300;
-    margin-top: 0;
-    transition: .2s all;
-  }
-
-  .control-button:hover{
-    color: var(--hover-button-color);
-    cursor: pointer;
-  }
-
-  .volume-control{
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: .5em auto;
-    gap: 1rem;
-  }
-
-  .volume-control input {
-    width: 100%;
-    height: 3px;
-    background: var(--background-menu);
-    opacity: .9;
-  }
-
-  .volume-control input:hover {
-    opacity: 1;
-  }
-
-  .volume-control input[type=range] {
-    appearance: none;
-    width: 100%;
-    height: 3px;
-    background: var(--text-color);
-    opacity: .9;
-  }
-
-  .volume-control input[type=range]::-webkit-slider-thumb {
-    appearance: none;
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background: var(--hover-thumb-color);
-    cursor: pointer;
-    border: 1px solid var(--text-color);
-
-  }
 .hidden {
-  display: none
+  display: none;
 }

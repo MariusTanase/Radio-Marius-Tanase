@@ -1,14 +1,28 @@
-import React from 'react'
-import { ButtonType } from '../../types/types'
+import React from 'react';
+import { ButtonType } from '../../types/types';
 
-const CustomButton = (props : ButtonType) => {
-    let { className, action, title} = props
+/**
+ * A reusable button component with consistent styling and behavior
+ */
+const CustomButton: React.FC<ButtonType> = ({
+  className,
+  action,
+  title,
+  type = 'button',
+  ariaLabel,
+  disabled = false
+}) => {
+  return (
+    <button
+      className={className}
+      onClick={action}
+      type={type}
+      aria-label={ariaLabel || title}
+      disabled={disabled}
+    >
+      {title}
+    </button>
+  );
+};
 
-    return (
-        <button className={className} onClick={action}>
-            {title}
-        </button>
-    )
-}
-
-export default CustomButton
+export default CustomButton;

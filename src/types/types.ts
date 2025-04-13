@@ -1,21 +1,40 @@
 export type toggleType = {
-    toggleUI: boolean
+  toggleUI: boolean
 }
 
 export interface RadioObject {
-    id?: number,
-    title: string,
-    genre: string,
-    image: string,
-    url: string
+  id?: number,
+  title: string,
+  url: string,
+  genre: string,
+  image: string,
 }
 
-export type ButtonType = {
-    className: string,
-    action: () => void,
-    title: string
+export interface ToggleUIProps {
+  toggleUI: boolean;
+}
+
+export interface ButtonType {
+  className: string;
+  action: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  title: string;
+  type?: 'submit' | 'button' | 'reset';
+  ariaLabel?: string;
+  disabled?: boolean;
 }
 
 export type SettingsProps = {
-    toggleUI: () => void
-  }
+  toggleUI: () => void
+}
+export interface PlayerProps {
+  list: RadioItem[];
+  toggleUI: boolean;
+}
+export interface RadioItem {
+  id: string | number;
+  title: string;
+  url: string;
+  artist?: string;
+  genre?: string;
+  image: string;
+}
