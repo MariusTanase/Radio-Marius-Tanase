@@ -13,7 +13,7 @@ export interface ToggleUIProps {
 export interface ButtonType {
   className: string;
   action: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  title: React.ReactNode | string;
+  title: React.ReactNode;
   type?: 'submit' | 'button' | 'reset';
   ariaLabel?: string;
   disabled?: boolean;

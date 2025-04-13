@@ -17,7 +17,7 @@ const CustomButton: React.FC<ButtonType> = ({
       className={className}
       onClick={action}
       type={type}
-      aria-label={ariaLabel || title}
+      aria-label={ariaLabel}
       disabled={disabled}
     >
       {title}
