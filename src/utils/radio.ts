@@ -2,6 +2,14 @@
  * Utility functions for controlling radio playback and UI updates
  */
 
+// Keep track of current radio info
+let currentRadioInfo = {
+    url: '',
+    title: '',
+    genre: '',
+    image: ''
+};
+
 /**
  * Sets the source URL for the audio element
  * @param radio - URL of the radio stream
@@ -10,6 +18,7 @@ function setRadio(radio: string): void {
     const audioElement = document.querySelector('audio') as HTMLAudioElement;
     if (audioElement) {
         audioElement.src = radio;
+        currentRadioInfo.url = radio;
     } else {
         console.error('Audio element not found in the DOM');
     }
@@ -23,6 +32,19 @@ function setRadioName(radioName: string): void {
     const titleElement = document.querySelector('.title') as HTMLElement;
     if (titleElement) {
         titleElement.textContent = radioName;
+        currentRadioInfo.title = radioName;
+
+        // Also update the current-radio element if it exists
+        const currentRadioElement = document.querySelector('.current-radio') as HTMLElement;
+        if (currentRadioElement) {
+            currentRadioElement.textContent = radioName;
+
+            // Add animation class
+            currentRadioElement.classList.remove('text-fade');
+            // Force reflow
+            void currentRadioElement.offsetWidth;
+            currentRadioElement.classList.add('text-fade');
+        }
     } else {
         console.error('Title element not found in the DOM');
     }
@@ -37,17 +59,21 @@ function setRadioName(radioName: string): void {
 function setRadioImage(radioImage: string, radioName: string, radioGenre: string = ''): void {
     const artworkElement = document.querySelector('.artwork') as HTMLImageElement;
     if (artworkElement) {
-        artworkElement.src = radioImage;
-
-        // Create more descriptive alt text when genre is available
-        const altText = radioGenre
-            ? `${radioName} - ${radioGenre} radio station`
-            : `${radioName} radio station`;
-
-        artworkElement.alt = altText;
-
         // Preload image to avoid flickering
         const img = new Image();
+        img.onload = () => {
+            if (artworkElement) {
+                artworkElement.src = radioImage;
+
+                // Create more descriptive alt text when genre is available
+                const altText = radioGenre
+                    ? `${radioName} - ${radioGenre} radio station`
+                    : `${radioName} radio station`;
+
+                artworkElement.alt = altText;
+                currentRadioInfo.image = radioImage;
+            }
+        };
         img.src = radioImage;
     } else {
         console.error('Artwork element not found in the DOM');
@@ -105,6 +131,7 @@ function setRadioGenre(genre: string): void {
     if (genreElement) {
         // Only add "Genre:" prefix if there's actual genre text
         genreElement.textContent = genre ? `Genre: ${genre}` : '';
+        currentRadioInfo.genre = genre;
     } else {
         console.error('Genre element not found in the DOM');
     }
@@ -160,6 +187,14 @@ function getRadioVolume(): number {
     return audioElement.volume;
 }
 
+/**
+ * Gets the current radio information
+ * @returns Current radio info object
+ */
+function getCurrentRadioInfo() {
+    return { ...currentRadioInfo };
+}
+
 export {
     setRadio,
     setRadioName,
@@ -169,5 +204,6 @@ export {
     setRadioGenre,
     setRadioVolume,
     isRadioPlaying,
-    getRadioVolume
+    getRadioVolume,
+    getCurrentRadioInfo
 };

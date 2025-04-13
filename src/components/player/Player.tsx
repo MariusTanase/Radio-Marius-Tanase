@@ -9,27 +9,29 @@ import { PlayerProps, RadioItem } from '../../types/types';
  * Audio player component for streaming radio stations
  */
 const Player: React.FC<PlayerProps> = ({ list, toggleUI }) => {
-  const [state, setState] = useState({
-    radioId: 0,
-    audioIsRunning: false,
-    volume: 0.1,
-  });
+  const [radioId, setRadioId] = useState<number>(0);
+  const [audioIsRunning, setAudioIsRunning] = useState<boolean>(false);
+  const [volume, setVolume] = useState<number>(0.1);
+  const [currentMetadata, setCurrentMetadata] = useState<string>('');
+  const [isLoadingStream, setIsLoadingStream] = useState<boolean>(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const playerContainer = useRef<HTMLDivElement>(null);
+  const metadataIntervalRef = useRef<number | null>(null);
 
   // Handle space key for play/pause
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.code === 'Space' && !event.repeat) {
+      if (event.code === 'Space' && !event.repeat && 
+          !(event.target instanceof HTMLInputElement || event.target instanceof HTMLButtonElement)) {
         event.preventDefault(); // Prevent page scrolling
-        state.audioIsRunning ? pauseAudio() : playAudio();
+        audioIsRunning ? pauseAudio() : playAudio();
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [state.audioIsRunning]);
+  }, [audioIsRunning]);
 
   // Handle UI visibility toggle
   useEffect(() => {
@@ -42,25 +44,49 @@ const Player: React.FC<PlayerProps> = ({ list, toggleUI }) => {
     }
   }, [toggleUI]);
 
-  // Initialize volume and radio on component mount
+  // Initialize player
   useEffect(() => {
     volumeControl(0.1);
-    randomRadio();
-
+    
+    // Initialize with a random radio
+    const initialRadioId = Math.floor(Math.random() * list.length);
+    changeRadioAndPlay(initialRadioId);
+    
     // Cleanup on component unmount
     return () => {
       stopRadio();
+      if (metadataIntervalRef.current) {
+        window.clearInterval(metadataIntervalRef.current);
+        metadataIntervalRef.current = null;
+      }
     };
   }, []);
 
+  // Update currentMetadata whenever radioId changes
+  useEffect(() => {
+    if (list[radioId]) {
+      setCurrentMetadata(list[radioId].title);
+    }
+  }, [radioId, list]);
+
   const playAudio = (): void => {
-    startRadio();
-    setState((prevState) => ({ ...prevState, audioIsRunning: true }));
+    setIsLoadingStream(true);
+    
+    startRadio()
+      .then(success => {
+        if (success) {
+          setAudioIsRunning(true);
+        }
+        setIsLoadingStream(false);
+      })
+      .catch(() => {
+        setIsLoadingStream(false);
+      });
   };
 
   const pauseAudio = (): void => {
     stopRadio();
-    setState((prevState) => ({ ...prevState, audioIsRunning: false }));
+    setAudioIsRunning(false);
   };
 
   const changeRadio = (id: number): void => {
@@ -73,40 +99,52 @@ const Player: React.FC<PlayerProps> = ({ list, toggleUI }) => {
     }
   };
 
-  const playRadio = (id: number): void => {
+  const changeRadioAndPlay = (id: number): void => {
     if (id >= 0 && id < list.length) {
+      setIsLoadingStream(true);
+      
+      // Update radioId state
+      setRadioId(id);
+      
+      // If already playing, stop first
+      if (audioIsRunning) {
+        stopRadio();
+      }
+      
+      // Change the radio
       changeRadio(id);
-      playAudio();
-      setState((prevState) => ({ ...prevState, radioId: id }));
+      
+      // Small delay to allow audio to properly change source
+      setTimeout(() => {
+        playAudio();
+      }, 100);
     }
   };
 
   const randomRadio = (): void => {
     const randomId = Math.floor(Math.random() * list.length);
-    playRadio(randomId);
+    changeRadioAndPlay(randomId);
   };
 
   const previousRadio = (): void => {
-    let { radioId } = state;
-    radioId = radioId === 0 ? list.length - 1 : radioId - 1;
-    playRadio(radioId);
+    const prevId = radioId === 0 ? list.length - 1 : radioId - 1;
+    changeRadioAndPlay(prevId);
   };
 
   const nextRadio = (): void => {
-    let { radioId } = state;
-    radioId = radioId === list.length - 1 ? 0 : radioId + 1;
-    playRadio(radioId);
+    const nextId = radioId === list.length - 1 ? 0 : radioId + 1;
+    changeRadioAndPlay(nextId);
   };
 
   const volumeControl = (value: number): void => {
     setRadioVolume(value);
-    setState((prevState) => ({ ...prevState, volume: value }));
+    setVolume(value);
   };
 
   // Helper function to determine volume icon
   const getVolumeIcon = () => {
-    if (state.volume === 0) return faVolumeXmark;
-    if (state.volume < 0.5) return faVolumeLow;
+    if (volume === 0) return faVolumeXmark;
+    if (volume < 0.5) return faVolumeLow;
     return faVolumeHigh;
   };
 
@@ -124,22 +162,29 @@ const Player: React.FC<PlayerProps> = ({ list, toggleUI }) => {
             className="control-button previous" 
             onClick={previousRadio}
             aria-label="Previous station"
+            disabled={isLoadingStream}
           >
             <FontAwesomeIcon icon={faBackward} />
           </button>
 
           <button 
             className="control-button play" 
-            onClick={state.audioIsRunning ? pauseAudio : playAudio}
-            aria-label={state.audioIsRunning ? "Pause" : "Play"}
+            onClick={audioIsRunning ? pauseAudio : playAudio}
+            aria-label={audioIsRunning ? "Pause" : "Play"}
+            disabled={isLoadingStream}
           >
-            <FontAwesomeIcon icon={state.audioIsRunning ? faPause : faPlay} />
+            {isLoadingStream ? (
+              <div className="loading-spinner"></div>
+            ) : (
+              <FontAwesomeIcon icon={audioIsRunning ? faPause : faPlay} />
+            )}
           </button>
 
           <button 
             className="control-button next" 
             onClick={nextRadio}
             aria-label="Next station"
+            disabled={isLoadingStream}
           >
             <FontAwesomeIcon icon={faForward} />
           </button>
@@ -150,6 +195,7 @@ const Player: React.FC<PlayerProps> = ({ list, toggleUI }) => {
             className="control-button shuffle" 
             onClick={randomRadio}
             aria-label="Random station"
+            disabled={isLoadingStream}
           >
             <FontAwesomeIcon icon={faShuffle} />
           </button>
@@ -157,8 +203,8 @@ const Player: React.FC<PlayerProps> = ({ list, toggleUI }) => {
           <div className="volume-slider-container">
             <button 
               className="control-button volume-icon" 
-              onClick={() => volumeControl(state.volume === 0 ? 0.5 : 0)}
-              aria-label={state.volume === 0 ? "Unmute" : "Mute"}
+              onClick={() => volumeControl(volume === 0 ? 0.5 : 0)}
+              aria-label={volume === 0 ? "Unmute" : "Mute"}
             >
               <FontAwesomeIcon icon={getVolumeIcon()} />
             </button>
@@ -169,7 +215,7 @@ const Player: React.FC<PlayerProps> = ({ list, toggleUI }) => {
               max="1" 
               step="0.01"
               className="volume-slider"
-              value={state.volume}
+              value={volume}
               onChange={(e) => volumeControl(Number(e.target.value))}
               aria-label="Volume control"
             />
@@ -178,10 +224,17 @@ const Player: React.FC<PlayerProps> = ({ list, toggleUI }) => {
       </div>
 
       <div className="now-playing">
-        Now Playing: <span className="current-radio">{list[state.radioId]?.title || ''}</span>
+        <div className="now-playing-label">Now Playing:</div> 
+        <div className="current-radio">{currentMetadata}</div>
       </div>
 
-      <audio ref={audioRef} src="" />
+      <audio 
+        ref={audioRef} 
+        onError={(e) => {
+          console.error('Audio error:', e);
+          setIsLoadingStream(false);
+        }}
+      />
     </div>
   );
 };

@@ -10,7 +10,7 @@ interface BackgroundCache {
 }
 
 const backgroundCache: BackgroundCache = {};
-const PEXELS_API_KEY = 'YOUR_PEXELS_API_KEY'; // Replace with your Pexels API key
+const PEXELS_API_KEY = 'IO2htYRWcHhia6rDe0glYURIlxLZusz3XTBoZqMHWg5wudusESFF40Vx';
 
 /**
  * Gets a random background image based on the theme
@@ -53,7 +53,7 @@ const generateImage = async (theme: string): Promise<void> => {
 const fetchAndCacheImages = async (theme: string): Promise<void> => {
   try {
     // Option 1: Pexels API (recommended)
-    const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(theme)}&per_page=15&orientation=landscape`, {
+    const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(theme)}&orientation=landscape`, {
       headers: {
         'Authorization': PEXELS_API_KEY
       }

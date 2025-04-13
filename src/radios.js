@@ -4,16 +4,8 @@ export const radios = [
         title: 'Virgin FM',
         artist: 'Pop',
         genre: 'Pop',
-        image: 'https://yt3.googleusercontent.com/u5l6CzL3sSRgQJPzNczUX9bvA81HFyIwfdRz-SJR0EQvezpPQAj4J1zmhUK5mH-hEY_Oayg3ecA=s900-c-k-c0x00ffffff-no-rj',
+        image: 'https://virginradio.co.uk/virgin/assets/virginradiouk-thumbnail.png',
         url: 'https://radio.virginradio.co.uk/stream'
-    },
-    {
-        id: 2,
-        title: 'Classic',
-        artist: 'Classical',
-        genre: 'Classical',
-        image: 'https://uk.radio.net/images/broadcasts/79/5a/121368/1/c300.png',
-        url: 'https://media-ssl.musicradio.com/ClassicFM'
     },
     {
         id: 3,
@@ -33,10 +25,10 @@ export const radios = [
     },
     {
         id: 5,
-        title: 'Capital UK',
+        title: '95.8 Capital FM',
         artist: 'Pop',
         genre: 'Pop',
-        image: 'https://radio-live-uk.com/assets/image/radio/180/capital-fm.jpg',
+        image: 'https://static.mytuner.mobi/media/tvos_radios/Drt6RrkVvw.png',
         url: 'https://media-ssl.musicradio.com/CapitalUK'
     },
     {
