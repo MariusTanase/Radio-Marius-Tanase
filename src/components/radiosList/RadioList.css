@@ -1,8 +1,7 @@
 .radios-container {
-  max-width: 1000px;
+  max-width: 80%;
   max-height: fit-content;
   margin: 4rem auto;
-  margin-left: 220px; /* Space for category filter */
   transition: margin 0.3s ease;
 }
 
