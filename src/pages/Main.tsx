@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import Background from '../components/background/background'
+import BackgroundParticles from '../components/Particles/Particles'
 import Footer from '../components/footer/Footer'
 import Player from '../components/player/Player'
 import RadioList from '../components/radiosList/RadioList'
@@ -15,7 +15,7 @@ const Main = () => {
 
   return (
     <>
-      <Background />
+      <BackgroundParticles />
       <Player list={radios} toggleUI={showUI} />
       <RadioList toggleUI={showUI} />
       <Settings toggleUI={toggleUI} />

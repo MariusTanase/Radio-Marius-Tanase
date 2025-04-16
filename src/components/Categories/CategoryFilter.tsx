@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './CategoryFilter.css';
 import { RadioItem } from '../../types/types';
 
@@ -6,13 +6,28 @@ interface CategoryFilterProps {
   radios: RadioItem[];
   activeCategory: string;
   onCategoryChange: (category: string) => void;
+  toggleUI: boolean;
 }
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({ 
   radios, 
   activeCategory, 
-  onCategoryChange 
+  onCategoryChange,
+  toggleUI
 }) => {
+    let radioGenreContainer = React.useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+      if (radioGenreContainer.current) {
+        console.log('toggleUI', toggleUI);
+        if (toggleUI) {
+          radioGenreContainer.current.classList.add('hidden');
+        } else {
+          radioGenreContainer.current.classList.remove('hidden');
+        }
+      }
+    }, [toggleUI]);
+
   // Extract unique genres from radios
   const getUniqueGenres = (): string[] => {
     const genres = radios
@@ -29,7 +44,7 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({
   const genres = getUniqueGenres();
 
   return (
-    <div className="category-filter">
+    <div className="category-filter" ref={radioGenreContainer}>
       <h3 className="category-filter__title">Genres</h3>
       <ul className="category-filter__list">
         {genres.map(genre => (

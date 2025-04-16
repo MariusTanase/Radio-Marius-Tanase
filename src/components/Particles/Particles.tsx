@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import './background.css';
+import './particles.css';
 import { initBackground } from '../../utils/backgroundGeneration';
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import {
@@ -10,7 +10,7 @@ import {
 } from "@tsparticles/engine";
 import { loadSlim } from "@tsparticles/slim";
 
-const Background = () => {
+const BackgroundParticles = () => {
   const [init, setInit] = useState(false);
   const [isParticlesEnabled, setIsParticlesEnabled] = useState(() => {
     // Initialize from localStorage or default to true
@@ -65,14 +65,14 @@ const Background = () => {
   // Handler for when particles container is loaded
   const particlesLoaded = async (container?: Container): Promise<void> => {
     if (container) {
-      console.log("Particles container loaded");
+      await container.refresh();
     }
   };
 
   // Particles configuration
   const options: ISourceOptions = useMemo(
     () => ({
-      fullScreen: false, // Important! Don't use fullScreen mode
+      fullScreen: false,
       background: {
         color: {
           value: "transparent",
@@ -118,7 +118,7 @@ const Background = () => {
             default: OutMode.out,
           },
           random: false,
-          speed: 2, // Slowed down for smoother effect
+          speed: 2,
           straight: false,
         },
         number: {
@@ -129,7 +129,7 @@ const Background = () => {
           value: 80,
         },
         opacity: {
-          value: { min: 0.1, max: 0.5 }, // Randomized opacity
+          value: { min: 0.1, max: 1 },
           animation: {
             enable: true,
             speed: 1,
@@ -137,7 +137,7 @@ const Background = () => {
           }
         },
         shape: {
-          type: "circle", // Changed to circle for better performance
+          type: "star",
         },
         size: {
           value: { min: 1, max: 5 },
@@ -171,4 +171,4 @@ const Background = () => {
   );
 };
 
-export default Background;
+export default BackgroundParticles;

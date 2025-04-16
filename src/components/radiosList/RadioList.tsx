@@ -57,6 +57,7 @@ const RadioList: React.FC<ToggleUIProps> = ({ toggleUI }) => {
         radios={radios} 
         activeCategory={activeCategory} 
         onCategoryChange={handleCategoryChange} 
+        toggleUI={toggleUI}
       />
       
       <div ref={radioPlaylistContainer} className="radios-container" aria-label="Radio stations list">
